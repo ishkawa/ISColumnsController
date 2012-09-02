@@ -7,17 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7737A06515F34ADD0078CA7B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7737A06415F34ADD0078CA7B /* QuartzCore.framework */; };
+		7737A06815F34D6D0078CA7B /* ISViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7737A06715F34D6D0078CA7B /* ISViewController.xib */; };
+		7737A06F15F350610078CA7B /* ISColumnsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7737A06E15F350610078CA7B /* ISColumnsController.m */; };
 		77E37437158E0C44007C75E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77E37436158E0C44007C75E8 /* UIKit.framework */; };
 		77E37439158E0C44007C75E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77E37438158E0C44007C75E8 /* Foundation.framework */; };
 		77E3743B158E0C44007C75E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77E3743A158E0C44007C75E8 /* CoreGraphics.framework */; };
 		77E37441158E0C44007C75E8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 77E3743F158E0C44007C75E8 /* InfoPlist.strings */; };
 		77E37443158E0C44007C75E8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E37442158E0C44007C75E8 /* main.m */; };
 		77E37447158E0C44007C75E8 /* ISAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E37446158E0C44007C75E8 /* ISAppDelegate.m */; };
-		77E37450158E0C6A007C75E8 /* ISColumnsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E3744F158E0C6A007C75E8 /* ISColumnsController.m */; };
 		77E37453158E11BA007C75E8 /* ISViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E37452158E11BA007C75E8 /* ISViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7737A06415F34ADD0078CA7B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		7737A06715F34D6D0078CA7B /* ISViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ISViewController.xib; sourceTree = "<group>"; };
+		7737A06D15F350610078CA7B /* ISColumnsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISColumnsController.h; sourceTree = "<group>"; };
+		7737A06E15F350610078CA7B /* ISColumnsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISColumnsController.m; sourceTree = "<group>"; };
 		77E37432158E0C44007C75E8 /* Columns.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Columns.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		77E37436158E0C44007C75E8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		77E37438158E0C44007C75E8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -28,8 +34,6 @@
 		77E37444158E0C44007C75E8 /* Columns-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Columns-Prefix.pch"; sourceTree = "<group>"; };
 		77E37445158E0C44007C75E8 /* ISAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISAppDelegate.h; sourceTree = "<group>"; };
 		77E37446158E0C44007C75E8 /* ISAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ISAppDelegate.m; sourceTree = "<group>"; };
-		77E3744E158E0C6A007C75E8 /* ISColumnsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISColumnsController.h; sourceTree = "<group>"; };
-		77E3744F158E0C6A007C75E8 /* ISColumnsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISColumnsController.m; sourceTree = "<group>"; };
 		77E37451158E11BA007C75E8 /* ISViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISViewController.h; sourceTree = "<group>"; };
 		77E37452158E11BA007C75E8 /* ISViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -39,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7737A06515F34ADD0078CA7B /* QuartzCore.framework in Frameworks */,
 				77E37437158E0C44007C75E8 /* UIKit.framework in Frameworks */,
 				77E37439158E0C44007C75E8 /* Foundation.framework in Frameworks */,
 				77E3743B158E0C44007C75E8 /* CoreGraphics.framework in Frameworks */,
@@ -48,13 +53,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7737A06C15F350610078CA7B /* ISColumnsController */ = {
+			isa = PBXGroup;
+			children = (
+				7737A06D15F350610078CA7B /* ISColumnsController.h */,
+				7737A06E15F350610078CA7B /* ISColumnsController.m */,
+			);
+			name = ISColumnsController;
+			path = ../ISColumnsController;
+			sourceTree = "<group>";
+		};
 		77E37427158E0C44007C75E8 = {
 			isa = PBXGroup;
 			children = (
 				77E3743C158E0C44007C75E8 /* Columns */,
 				77E37435158E0C44007C75E8 /* Frameworks */,
 				77E37433158E0C44007C75E8 /* Products */,
-				77E3744D158E0C6A007C75E8 /* ISColumnsController */,
+				7737A06C15F350610078CA7B /* ISColumnsController */,
 			);
 			sourceTree = "<group>";
 		};
@@ -69,6 +84,7 @@
 		77E37435158E0C44007C75E8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7737A06415F34ADD0078CA7B /* QuartzCore.framework */,
 				77E37436158E0C44007C75E8 /* UIKit.framework */,
 				77E37438158E0C44007C75E8 /* Foundation.framework */,
 				77E3743A158E0C44007C75E8 /* CoreGraphics.framework */,
@@ -83,6 +99,7 @@
 				77E37446158E0C44007C75E8 /* ISAppDelegate.m */,
 				77E37451158E11BA007C75E8 /* ISViewController.h */,
 				77E37452158E11BA007C75E8 /* ISViewController.m */,
+				7737A06715F34D6D0078CA7B /* ISViewController.xib */,
 				77E3743D158E0C44007C75E8 /* Supporting Files */,
 			);
 			path = Columns;
@@ -97,15 +114,6 @@
 				77E37444158E0C44007C75E8 /* Columns-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		77E3744D158E0C6A007C75E8 /* ISColumnsController */ = {
-			isa = PBXGroup;
-			children = (
-				77E3744E158E0C6A007C75E8 /* ISColumnsController.h */,
-				77E3744F158E0C6A007C75E8 /* ISColumnsController.m */,
-			);
-			path = ISColumnsController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -160,6 +168,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				77E37441158E0C44007C75E8 /* InfoPlist.strings in Resources */,
+				7737A06815F34D6D0078CA7B /* ISViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,8 +181,8 @@
 			files = (
 				77E37443158E0C44007C75E8 /* main.m in Sources */,
 				77E37447158E0C44007C75E8 /* ISAppDelegate.m in Sources */,
-				77E37450158E0C6A007C75E8 /* ISColumnsController.m in Sources */,
 				77E37453158E11BA007C75E8 /* ISViewController.m in Sources */,
+				7737A06F15F350610078CA7B /* ISColumnsController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,6 +288,7 @@
 				77E3744C158E0C44007C75E8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

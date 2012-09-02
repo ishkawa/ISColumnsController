@@ -1,4 +1,5 @@
 #import "ISColumnsController.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface ISColumnsController ()
 
@@ -9,11 +10,6 @@
 @end
 
 @implementation ISColumnsController
-
-@synthesize viewControllers = _viewControllers;
-@synthesize scrollView = _scrollView;
-@synthesize titleLabel = _titleLabel;
-@synthesize pageControl = _pageControl;
 
 #pragma mark - life cycle
 
@@ -43,7 +39,26 @@
     self.scrollView.delegate = self;
     self.scrollView.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
     self.scrollView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    self.scrollView.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];
     [self.view addSubview:self.scrollView];
+    
+    CALayer *topShadowLayer = [CALayer layer];
+    UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(-10, -10, 10000, 13)];
+    topShadowLayer.frame = CGRectMake(-320, 0, 10000, 20);
+    topShadowLayer.masksToBounds = YES;
+    topShadowLayer.shadowOffset = CGSizeMake(2.5, 2.5);
+    topShadowLayer.shadowOpacity = 0.5;
+    topShadowLayer.shadowPath = [path CGPath];
+    [self.scrollView.layer addSublayer:topShadowLayer];
+
+    CALayer *bottomShadowLayer = [CALayer layer];
+    path = [UIBezierPath bezierPathWithRect:CGRectMake(10, 10, 10000, 13)];
+    bottomShadowLayer.frame = CGRectMake(-320, self.scrollView.frame.size.height-58, 10000, 20);
+    bottomShadowLayer.masksToBounds = YES;
+    bottomShadowLayer.shadowOffset = CGSizeMake(-2.5, -2.5);
+    bottomShadowLayer.shadowOpacity = 0.5;
+    bottomShadowLayer.shadowPath = [path CGPath];
+    [self.scrollView.layer addSublayer:bottomShadowLayer];
     
     UIView *titleView = [[[UIView alloc] init] autorelease];
     titleView.frame = CGRectMake(0, 0, 150, 44);
@@ -59,18 +74,27 @@
     self.titleLabel.backgroundColor = [UIColor clearColor];
     self.titleLabel.textAlignment = UITextAlignmentCenter;
     self.titleLabel.textColor = [UIColor whiteColor];
+    self.titleLabel.shadowColor = [UIColor darkGrayColor];
     [titleView addSubview:self.titleLabel];
     
     self.navigationItem.titleView = titleView;
 }
 
+- (void)viewDidUnload
+{
+    self.scrollView = nil;
+    
+    [super viewDidUnload];
+}
+
 - (void)dealloc
 {
     [self removeObserver:self forKeyPath:@"viewControllers"];
-    [_viewControllers release], _viewControllers = nil;
-    [_scrollView release], _scrollView = nil;
-    [_titleLabel release], _titleLabel = nil;
-    [_pageControl release], _pageControl = nil;
+    [_viewControllers release];
+    [_scrollView release];
+    [_titleLabel release];
+    [_pageControl release];
+    
     [super dealloc];
 }
 
@@ -107,8 +131,14 @@
             self.titleLabel.text = viewController.navigationItem.title;
         }
     }
-    self.scrollView.contentSize = 
-    CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
+    self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
+    
+    for (UIViewController *viewController in self.childViewControllers) {
+        CALayer *layer = viewController.view.layer;
+        layer.shadowOpacity = .5f;
+        layer.shadowOffset = CGSizeMake(10, 10);
+        layer.shadowPath = [UIBezierPath bezierPathWithRect:viewController.view.bounds].CGPath;
+    }
 }
 
 - (void)enableScrollsToTop
@@ -178,6 +208,11 @@
         if (scale < .8f) scale = .8f;
         
         viewController.view.transform = CGAffineTransformMakeScale(scale, scale);
+    }
+
+    for (UIViewController *viewController in self.childViewControllers) {
+        CALayer *layer = viewController.view.layer;
+        layer.shadowPath = [UIBezierPath bezierPathWithRect:viewController.view.bounds].CGPath;
     }
 }
 
