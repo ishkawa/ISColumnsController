@@ -17,11 +17,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.columnsController = [[[ISColumnsController alloc] init] autorelease];
-    self.columnsController.navigationItem.leftBarButtonItem = 
-    [[[UIBarButtonItem alloc] initWithTitle:@"PushNext"
-                                      style:UIBarButtonItemStylePlain
-                                     target:self
-                                     action:@selector(pushNextViewController)] autorelease];
     self.columnsController.navigationItem.rightBarButtonItem =
     [[[UIBarButtonItem alloc] initWithTitle:@"Reload"
                                       style:UIBarButtonItemStylePlain
@@ -41,28 +36,19 @@
 
 - (void)reloadViewControllers
 {
-    ISViewController *redViewController = [[[ISViewController alloc] init] autorelease];
-    redViewController.view.backgroundColor = [UIColor redColor];
-    redViewController.navigationItem.title = @"Red";
+    ISViewController *viewController1 = [[[ISViewController alloc] init] autorelease];
+    viewController1.navigationItem.title = @"ViewController 1";
     
-    ISViewController *greenViewController = [[[ISViewController alloc] init] autorelease];
-    greenViewController.view.backgroundColor = [UIColor greenColor];
-    greenViewController.navigationItem.title = @"Green";
+    ISViewController *viewController2 = [[[ISViewController alloc] init] autorelease];
+    viewController2.navigationItem.title = @"ViewController 2";
     
-    ISViewController *blueViewController = [[[ISViewController alloc] init] autorelease];
-    blueViewController.view.backgroundColor = [UIColor blueColor];
-    blueViewController.navigationItem.title = @"Blue";
+    ISViewController *viewController3 = [[[ISViewController alloc] init] autorelease];
+    viewController3.navigationItem.title = @"ViewController 3";
     
     self.columnsController.viewControllers = [NSArray arrayWithObjects:
-                                              redViewController,
-                                              greenViewController,
-                                              blueViewController, nil];
-}
-
-- (void)pushNextViewController
-{
-    UIViewController *viewController = [[[UIViewController alloc] init] autorelease];
-    [self.navigationController pushViewController:viewController animated:YES];
+                                              viewController1,
+                                              viewController2,
+                                              viewController3, nil];
 }
 
 @end
