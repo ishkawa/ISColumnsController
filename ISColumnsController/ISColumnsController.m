@@ -80,6 +80,12 @@
     self.navigationItem.titleView = titleView;
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self reloadChildViewControllers];
+}
+
 - (void)viewDidUnload
 {
     self.scrollView = nil;
