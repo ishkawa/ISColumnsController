@@ -61,4 +61,10 @@
     return YES;
 }
 
+- (void)pushViewController
+{
+    UIViewController *viewController = [[[UIViewController alloc] init] autorelease];
+    [self.navigationController pushViewController:viewController animated:YES];
+}
+
 @end
