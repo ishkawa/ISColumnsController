@@ -8,9 +8,9 @@
 
 @interface ISColumnsController : UIViewController <UIScrollViewDelegate>
 
-@property (retain, nonatomic) NSArray *viewControllers;
-@property (retain, nonatomic) UIScrollView *scrollView;
-@property (retain, nonatomic) UILabel *titleLabel;
+@property (retain, nonatomic) NSArray       *viewControllers;
+@property (retain, nonatomic) UIScrollView  *scrollView;
+@property (retain, nonatomic) UILabel       *titleLabel;
 @property (retain, nonatomic) UIPageControl *pageControl;
 
 @end

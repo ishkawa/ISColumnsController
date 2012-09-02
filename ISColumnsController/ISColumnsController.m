@@ -11,11 +11,6 @@
 
 @implementation ISColumnsController
 
-@synthesize viewControllers = _viewControllers;
-@synthesize scrollView = _scrollView;
-@synthesize titleLabel = _titleLabel;
-@synthesize pageControl = _pageControl;
-
 #pragma mark - life cycle
 
 - (id)init
@@ -85,13 +80,21 @@
     self.navigationItem.titleView = titleView;
 }
 
+- (void)viewDidUnload
+{
+    self.scrollView = nil;
+    
+    [super viewDidUnload];
+}
+
 - (void)dealloc
 {
     [self removeObserver:self forKeyPath:@"viewControllers"];
-    [_viewControllers release], _viewControllers = nil;
-    [_scrollView release], _scrollView = nil;
-    [_titleLabel release], _titleLabel = nil;
-    [_pageControl release], _pageControl = nil;
+    [_viewControllers release];
+    [_scrollView release];
+    [_titleLabel release];
+    [_pageControl release];
+    
     [super dealloc];
 }
 
