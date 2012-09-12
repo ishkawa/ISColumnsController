@@ -221,5 +221,11 @@
         layer.shadowPath = [UIBezierPath bezierPathWithRect:viewController.view.bounds].CGPath;
     }
 }
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+    return YES;
+}
+- (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
+    [self reloadChildViewControllers];
+}
 
 @end
