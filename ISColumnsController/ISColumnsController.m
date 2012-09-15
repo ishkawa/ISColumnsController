@@ -83,7 +83,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // setup
+    [self.pageControl addTarget:self action:@selector(didTapPageControl:) forControlEvents:UIControlEventValueChanged];
+    
+    
+    // refresh
     [self reloadChildViewControllers];
+
 }
 
 - (void)viewDidUnload
@@ -114,6 +120,15 @@
     }
 }
 
+#pragma mark - page view control
+- (void) goToPage:(NSUInteger )newPage{
+    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*newPage, 0) animated:YES];
+}
+- (void) didTapPageControl:(id) sender{
+    UIPageControl *pc = (UIPageControl *)sender;
+    [self goToPage:pc.currentPage];
+    
+}
 #pragma mark - action
 
 - (void)reloadChildViewControllers
@@ -138,6 +153,8 @@
         }
     }
     self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
+    // go to the right page
+    [self goToPage:self.pageControl.currentPage];
     
     for (UIViewController *viewController in self.childViewControllers) {
         CALayer *layer = viewController.view.layer;
@@ -220,6 +237,12 @@
         CALayer *layer = viewController.view.layer;
         layer.shadowPath = [UIBezierPath bezierPathWithRect:viewController.view.bounds].CGPath;
     }
+}
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+    return YES;
+}
+- (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
+    [self reloadChildViewControllers];
 }
 
 @end
