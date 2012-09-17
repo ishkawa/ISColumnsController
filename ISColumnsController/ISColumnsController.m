@@ -121,8 +121,12 @@
 }
 
 #pragma mark - page view control
+- (void) goToPage:(NSUInteger )newPage animated:(BOOL) animated{
+    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*newPage, 0) animated:animated];
+}
+
 - (void) goToPage:(NSUInteger )newPage{
-    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*newPage, 0) animated:YES];
+    [self goToPage:newPage animated:YES];
 }
 - (void) didTapPageControl:(id) sender{
     UIPageControl *pc = (UIPageControl *)sender;
@@ -156,7 +160,7 @@
     }
     self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
     // go to the right page
-    [self goToPage:self.pageControl.currentPage];
+    [self goToPage:self.pageControl.currentPage animated:NO];
     
     for (UIViewController *viewController in self.childViewControllers) {
         CALayer *layer = viewController.view.layer;
@@ -256,8 +260,10 @@
 - (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
     return YES;
 }
-- (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
     [self reloadChildViewControllers];
 }
+
 
 @end
