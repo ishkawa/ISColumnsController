@@ -83,7 +83,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // setup
+    [self.pageControl addTarget:self action:@selector(didTapPageControl:) forControlEvents:UIControlEventValueChanged];
+    
+    
+    // refresh
     [self reloadChildViewControllers];
+
 }
 
 - (void)viewDidUnload
@@ -114,6 +120,19 @@
     }
 }
 
+#pragma mark - page view control
+- (void) goToPage:(NSUInteger )newPage animated:(BOOL) animated{
+    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*newPage, 0) animated:animated];
+}
+
+- (void) goToPage:(NSUInteger )newPage{
+    [self goToPage:newPage animated:YES];
+}
+- (void) didTapPageControl:(id) sender{
+    UIPageControl *pc = (UIPageControl *)sender;
+    [self goToPage:pc.currentPage];
+    
+}
 #pragma mark - action
 
 - (void)reloadChildViewControllers
@@ -121,6 +140,8 @@
     for (UIViewController *viewController in self.childViewControllers) {
         [viewController willMoveToParentViewController:nil];
         [viewController removeFromParentViewController];
+        // remove transform
+        viewController.view.transform = CGAffineTransformIdentity;
         [viewController.view removeFromSuperview];
     }
     for (UIViewController *viewController in self.viewControllers) {
@@ -138,6 +159,8 @@
         }
     }
     self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
+    // go to the right page
+    [self goToPage:self.pageControl.currentPage animated:NO];
     
     for (UIViewController *viewController in self.childViewControllers) {
         CALayer *layer = viewController.view.layer;
@@ -173,6 +196,18 @@
     }
 }
 
+#pragma mark - current page, viewcontroller properties
+- (NSUInteger ) currentPage{
+    CGFloat offset = self.scrollView.contentOffset.x;
+    CGFloat width = self.scrollView.frame.size.width;
+    NSInteger currentPage = (offset+(width/2))/width;
+    return currentPage;
+}
+
+- (UIViewController <ISColumnsControllerChild> *) currentViewController{
+    return [self.viewControllers objectAtIndex:self.currentPage];
+}
+
 #pragma mark - scroll view delegate
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
@@ -182,26 +217,27 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    self.titleLabel.text = self.currentViewController.navigationItem.title;
+    self.pageControl.currentPage = self.currentPage;
     [self disableScrollsToTop];
 }
+
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     CGFloat offset = scrollView.contentOffset.x;
-    CGFloat width = scrollView.frame.size.width;
-    NSInteger currentPage = (offset+(width/2))/width;
+    NSUInteger currentPage = self.currentPage;
     if (currentPage != self.pageControl.currentPage && currentPage < [self.viewControllers count]) {
+        // Question - do not understand why previousViewController code here is the same index as currentVieWController? JC
         UIViewController <ISColumnsControllerChild> *previousViewController = [self.viewControllers objectAtIndex:self.pageControl.currentPage];
         if ([previousViewController respondsToSelector:@selector(didResignActive)]) {
             [previousViewController didResignActive];
         }
         
-        UIViewController <ISColumnsControllerChild> *currentViewController = [self.viewControllers objectAtIndex:currentPage];
+        UIViewController <ISColumnsControllerChild> *currentViewController = self.currentViewController;
         if ([currentViewController respondsToSelector:@selector(didBecomeActive)]) {
             [currentViewController didBecomeActive];
         }
-        self.titleLabel.text = currentViewController.navigationItem.title;
-        self.pageControl.currentPage = currentPage;
     }
     
     for (UIViewController *viewController in self.viewControllers) {
@@ -221,5 +257,13 @@
         layer.shadowPath = [UIBezierPath bezierPathWithRect:viewController.view.bounds].CGPath;
     }
 }
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+    return YES;
+}
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
+    [self reloadChildViewControllers];
+}
+
 
 @end
