@@ -136,6 +136,8 @@
     for (UIViewController *viewController in self.childViewControllers) {
         [viewController willMoveToParentViewController:nil];
         [viewController removeFromParentViewController];
+        // remove transform
+        viewController.view.transform = CGAffineTransformIdentity;
         [viewController.view removeFromSuperview];
     }
     for (UIViewController *viewController in self.viewControllers) {
@@ -222,6 +224,7 @@
     CGFloat offset = scrollView.contentOffset.x;
     NSUInteger currentPage = self.currentPage;
     if (currentPage != self.pageControl.currentPage && currentPage < [self.viewControllers count]) {
+        // Question - do not understand why previousViewController code here is the same index as currentVieWController? JC
         UIViewController <ISColumnsControllerChild> *previousViewController = [self.viewControllers objectAtIndex:self.pageControl.currentPage];
         if ([previousViewController respondsToSelector:@selector(didResignActive)]) {
             [previousViewController didResignActive];
