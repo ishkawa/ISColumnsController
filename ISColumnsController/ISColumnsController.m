@@ -190,6 +190,18 @@
     }
 }
 
+#pragma mark - current page, viewcontroller properties
+- (NSUInteger ) currentPage{
+    CGFloat offset = self.scrollView.contentOffset.x;
+    CGFloat width = self.scrollView.frame.size.width;
+    NSInteger currentPage = (offset+(width/2))/width;
+    return currentPage;
+}
+
+- (UIViewController <ISColumnsControllerChild> *) currentViewController{
+    return [self.viewControllers objectAtIndex:self.currentPage];
+}
+
 #pragma mark - scroll view delegate
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
@@ -199,26 +211,26 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    self.titleLabel.text = self.currentViewController.navigationItem.title;
+    self.pageControl.currentPage = self.currentPage;
     [self disableScrollsToTop];
 }
+
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     CGFloat offset = scrollView.contentOffset.x;
-    CGFloat width = scrollView.frame.size.width;
-    NSInteger currentPage = (offset+(width/2))/width;
+    NSUInteger currentPage = self.currentPage;
     if (currentPage != self.pageControl.currentPage && currentPage < [self.viewControllers count]) {
         UIViewController <ISColumnsControllerChild> *previousViewController = [self.viewControllers objectAtIndex:self.pageControl.currentPage];
         if ([previousViewController respondsToSelector:@selector(didResignActive)]) {
             [previousViewController didResignActive];
         }
         
-        UIViewController <ISColumnsControllerChild> *currentViewController = [self.viewControllers objectAtIndex:currentPage];
+        UIViewController <ISColumnsControllerChild> *currentViewController = self.currentViewController;
         if ([currentViewController respondsToSelector:@selector(didBecomeActive)]) {
             [currentViewController didBecomeActive];
         }
-        self.titleLabel.text = currentViewController.navigationItem.title;
-        self.pageControl.currentPage = currentPage;
     }
     
     for (UIViewController *viewController in self.viewControllers) {
