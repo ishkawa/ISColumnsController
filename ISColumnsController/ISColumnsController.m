@@ -18,12 +18,47 @@
     self = [super init];
     if (self) {
         [self view];
+        [self loadTitleView];
         [self addObserver:self
                forKeyPath:@"viewControllers"
                   options:NSKeyValueObservingOptionNew
                   context:nil];
     }
     return self;
+}
+
+- (void)loadTitleView
+{
+    UIView *titleView = [[[UIView alloc] init] autorelease];
+    titleView.frame = CGRectMake(0, 0, 150, 44);
+    titleView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    
+    self.pageControl = [[[UIPageControl alloc] init] autorelease];
+    self.pageControl.numberOfPages = 3;
+    self.pageControl.frame = CGRectMake(0, 27, 150, 14);
+    self.pageControl.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin|
+                                         UIViewAutoresizingFlexibleBottomMargin|
+                                         UIViewAutoresizingFlexibleHeight);
+    [self.pageControl addTarget:self
+                         action:@selector(didTapPageControl)
+               forControlEvents:UIControlEventValueChanged];
+    
+    [titleView addSubview:self.pageControl];
+    
+    self.titleLabel = [[[UILabel alloc] init] autorelease];
+    self.titleLabel.frame = CGRectMake(0, 5, 150, 24);
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:18];
+    self.titleLabel.backgroundColor = [UIColor clearColor];
+    self.titleLabel.textAlignment = UITextAlignmentCenter;
+    self.titleLabel.textColor = [UIColor whiteColor];
+    self.titleLabel.shadowColor = [UIColor darkGrayColor];
+    self.titleLabel.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin|
+                                        UIViewAutoresizingFlexibleBottomMargin|
+                                        UIViewAutoresizingFlexibleHeight);
+    
+    [titleView addSubview:self.titleLabel];
+    
+    self.navigationItem.titleView = titleView;
 }
 
 - (void)loadView
@@ -59,37 +94,6 @@
     bottomShadowLayer.shadowOpacity = 0.5;
     bottomShadowLayer.shadowPath = [path CGPath];
     [self.scrollView.layer addSublayer:bottomShadowLayer];
-    
-    UIView *titleView = [[[UIView alloc] init] autorelease];
-    titleView.frame = CGRectMake(0, 0, 150, 44);
-    titleView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-    
-    self.pageControl = [[[UIPageControl alloc] init] autorelease];
-    self.pageControl.numberOfPages = 3;
-    self.pageControl.frame = CGRectMake(0, 27, 150, 14);
-    self.pageControl.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin|
-                                         UIViewAutoresizingFlexibleBottomMargin|
-                                         UIViewAutoresizingFlexibleHeight);
-    [self.pageControl addTarget:self
-                         action:@selector(didTapPageControl)
-               forControlEvents:UIControlEventValueChanged];
-    
-    [titleView addSubview:self.pageControl];
-    
-    self.titleLabel = [[[UILabel alloc] init] autorelease];
-    self.titleLabel.frame = CGRectMake(0, 5, 150, 24);
-    self.titleLabel.font = [UIFont boldSystemFontOfSize:18];
-    self.titleLabel.backgroundColor = [UIColor clearColor];
-    self.titleLabel.textAlignment = UITextAlignmentCenter;
-    self.titleLabel.textColor = [UIColor whiteColor];
-    self.titleLabel.shadowColor = [UIColor darkGrayColor];
-    self.titleLabel.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin|
-                                        UIViewAutoresizingFlexibleBottomMargin|
-                                        UIViewAutoresizingFlexibleHeight);
-    
-    [titleView addSubview:self.titleLabel];
-    
-    self.navigationItem.titleView = titleView;
 }
 
 - (void)viewDidLoad
