@@ -18,12 +18,47 @@
     self = [super init];
     if (self) {
         [self view];
+        [self loadTitleView];
         [self addObserver:self
                forKeyPath:@"viewControllers"
                   options:NSKeyValueObservingOptionNew
                   context:nil];
     }
     return self;
+}
+
+- (void)loadTitleView
+{
+    UIView *titleView = [[[UIView alloc] init] autorelease];
+    titleView.frame = CGRectMake(0, 0, 150, 44);
+    titleView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    
+    self.pageControl = [[[UIPageControl alloc] init] autorelease];
+    self.pageControl.numberOfPages = 3;
+    self.pageControl.frame = CGRectMake(0, 27, 150, 14);
+    self.pageControl.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin|
+                                         UIViewAutoresizingFlexibleBottomMargin|
+                                         UIViewAutoresizingFlexibleHeight);
+    [self.pageControl addTarget:self
+                         action:@selector(didTapPageControl)
+               forControlEvents:UIControlEventValueChanged];
+    
+    [titleView addSubview:self.pageControl];
+    
+    self.titleLabel = [[[UILabel alloc] init] autorelease];
+    self.titleLabel.frame = CGRectMake(0, 5, 150, 24);
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:18];
+    self.titleLabel.backgroundColor = [UIColor clearColor];
+    self.titleLabel.textAlignment = UITextAlignmentCenter;
+    self.titleLabel.textColor = [UIColor whiteColor];
+    self.titleLabel.shadowColor = [UIColor darkGrayColor];
+    self.titleLabel.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin|
+                                        UIViewAutoresizingFlexibleBottomMargin|
+                                        UIViewAutoresizingFlexibleHeight);
+    
+    [titleView addSubview:self.titleLabel];
+    
+    self.navigationItem.titleView = titleView;
 }
 
 - (void)loadView
@@ -59,31 +94,17 @@
     bottomShadowLayer.shadowOpacity = 0.5;
     bottomShadowLayer.shadowPath = [path CGPath];
     [self.scrollView.layer addSublayer:bottomShadowLayer];
-    
-    UIView *titleView = [[[UIView alloc] init] autorelease];
-    titleView.frame = CGRectMake(0, 0, 150, 44);
-    
-    self.pageControl = [[[UIPageControl alloc] init] autorelease];
-    self.pageControl.numberOfPages = 3;
-    self.pageControl.frame = CGRectMake(0, 27, 150, 14);
-    [titleView addSubview:self.pageControl];
-    
-    self.titleLabel = [[[UILabel alloc] init] autorelease];
-    self.titleLabel.frame = CGRectMake(0, 7, 150, 20);
-    self.titleLabel.font = [UIFont boldSystemFontOfSize:18];
-    self.titleLabel.backgroundColor = [UIColor clearColor];
-    self.titleLabel.textAlignment = UITextAlignmentCenter;
-    self.titleLabel.textColor = [UIColor whiteColor];
-    self.titleLabel.shadowColor = [UIColor darkGrayColor];
-    [titleView addSubview:self.titleLabel];
-    
-    self.navigationItem.titleView = titleView;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     [self reloadChildViewControllers];
+    [self.pageControl addObserver:self
+                       forKeyPath:@"currentPage"
+                          options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld)
+                          context:nil];
 }
 
 - (void)viewDidUnload
@@ -96,12 +117,38 @@
 - (void)dealloc
 {
     [self removeObserver:self forKeyPath:@"viewControllers"];
+    [self.pageControl removeObserver:self forKeyPath:@"currentPage"];
+    
     [_viewControllers release];
     [_scrollView release];
     [_titleLabel release];
     [_pageControl release];
     
     [super dealloc];
+}
+
+#pragma mark - interface orientation
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    return YES;
+}
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    for (UIViewController *viewController in self.viewControllers) {
+        NSInteger index = [self.viewControllers indexOfObject:viewController];
+        
+        viewController.view.transform = CGAffineTransformIdentity;
+        viewController.view.frame = CGRectMake(self.scrollView.frame.size.width * index,
+                                               0,
+                                               self.scrollView.frame.size.width,
+                                               self.scrollView.frame.size.height);
+    }
+    
+    // go to the right page
+    self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
+    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*self.pageControl.currentPage, 0) animated:NO];
 }
 
 #pragma mark - key value observation
@@ -112,9 +159,48 @@
         [self reloadChildViewControllers];
         [self disableScrollsToTop];
     }
+    
+    if (object == self.pageControl && [keyPath isEqualToString:@"currentPage"]) {
+        NSInteger previousIndex = [[change objectForKey:@"old"] integerValue];
+        NSInteger currentIndex  = [[change objectForKey:@"new"] integerValue];
+        
+        if (previousIndex != currentIndex) {
+            [self didChangeCurrentPage:currentIndex previousPage:previousIndex];
+        }
+    }
 }
 
 #pragma mark - action
+
+- (void)didTapPageControl
+{
+    CGFloat offset = self.scrollView.contentOffset.x;
+    CGFloat width  = self.scrollView.frame.size.width;
+    
+    NSInteger currentPage = (offset+(width/2))/width;
+    NSInteger nextPage    = self.pageControl.currentPage;
+    
+    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*nextPage, 0) animated:YES];
+    
+    if (currentPage != nextPage) {
+        [self didChangeCurrentPage:nextPage previousPage:currentPage];
+    }
+}
+
+- (void)didChangeCurrentPage:(NSInteger)currentIndex previousPage:(NSInteger)previousIndex
+{
+    UIViewController <ISColumnsControllerChild> *previousViewController = [self.viewControllers objectAtIndex:previousIndex];
+    if ([previousViewController respondsToSelector:@selector(didResignActive)]) {
+        [previousViewController didResignActive];
+    }
+    
+    UIViewController <ISColumnsControllerChild> *currentViewController = [self.viewControllers objectAtIndex:currentIndex];
+    if ([currentViewController respondsToSelector:@selector(didBecomeActive)]) {
+        [currentViewController didBecomeActive];
+    }
+
+    self.titleLabel.text = currentViewController.navigationItem.title;
+}
 
 - (void)reloadChildViewControllers
 {
@@ -135,6 +221,9 @@
         [viewController didMoveToParentViewController:self];
         if (index == self.pageControl.currentPage) {
             self.titleLabel.text = viewController.navigationItem.title;
+            if ([viewController respondsToSelector:@selector(didBecomeActive)]) {
+                [(id)viewController didBecomeActive];
+            }
         }
     }
     self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
@@ -182,27 +271,16 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    CGFloat offset = self.scrollView.contentOffset.x;
+    CGFloat width = self.scrollView.frame.size.width;
+    self.pageControl.currentPage = (offset+(width/2))/width;
+    
     [self disableScrollsToTop];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     CGFloat offset = scrollView.contentOffset.x;
-    CGFloat width = scrollView.frame.size.width;
-    NSInteger currentPage = (offset+(width/2))/width;
-    if (currentPage != self.pageControl.currentPage && currentPage < [self.viewControllers count]) {
-        UIViewController <ISColumnsControllerChild> *previousViewController = [self.viewControllers objectAtIndex:self.pageControl.currentPage];
-        if ([previousViewController respondsToSelector:@selector(didResignActive)]) {
-            [previousViewController didResignActive];
-        }
-        
-        UIViewController <ISColumnsControllerChild> *currentViewController = [self.viewControllers objectAtIndex:currentPage];
-        if ([currentViewController respondsToSelector:@selector(didBecomeActive)]) {
-            [currentViewController didBecomeActive];
-        }
-        self.titleLabel.text = currentViewController.navigationItem.title;
-        self.pageControl.currentPage = currentPage;
-    }
     
     for (UIViewController *viewController in self.viewControllers) {
         NSInteger index = [self.viewControllers indexOfObject:viewController];
