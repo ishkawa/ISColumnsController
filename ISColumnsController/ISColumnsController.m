@@ -123,6 +123,30 @@
     [super dealloc];
 }
 
+#pragma mark - interface orientation
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    return YES;
+}
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    for (UIViewController *viewController in self.viewControllers) {
+        NSInteger index = [self.viewControllers indexOfObject:viewController];
+        
+        viewController.view.transform = CGAffineTransformIdentity;
+        viewController.view.frame = CGRectMake(self.scrollView.frame.size.width * index,
+                                               0,
+                                               self.scrollView.frame.size.width,
+                                               self.scrollView.frame.size.height);
+    }
+    
+    // go to the right page
+    self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
+    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*self.pageControl.currentPage, 0) animated:NO];
+}
+
 #pragma mark - key value observation
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -146,7 +170,10 @@
 
 - (void)didTapPageControl
 {
-    NSInteger currentPage = [self currentPage];
+    CGFloat offset = self.scrollView.contentOffset.x;
+    CGFloat width  = self.scrollView.frame.size.width;
+    
+    NSInteger currentPage = (offset+(width/2))/width;
     NSInteger nextPage    = self.pageControl.currentPage;
     
     [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*nextPage, 0) animated:YES];
@@ -167,6 +194,8 @@
     if ([currentViewController respondsToSelector:@selector(didBecomeActive)]) {
         [currentViewController didBecomeActive];
     }
+
+    self.titleLabel.text = currentViewController.navigationItem.title;
 }
 
 - (void)reloadChildViewControllers
@@ -229,18 +258,6 @@
     }
 }
 
-#pragma mark - current page, viewcontroller properties
-- (NSUInteger ) currentPage{
-    CGFloat offset = self.scrollView.contentOffset.x;
-    CGFloat width = self.scrollView.frame.size.width;
-    NSInteger currentPage = (offset+(width/2))/width;
-    return currentPage;
-}
-
-- (UIViewController <ISColumnsControllerChild> *) currentViewController{
-    return [self.viewControllers objectAtIndex:self.currentPage];
-}
-
 #pragma mark - scroll view delegate
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
@@ -250,11 +267,12 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    self.titleLabel.text = self.currentViewController.navigationItem.title;
-    self.pageControl.currentPage = self.currentPage;
+    CGFloat offset = self.scrollView.contentOffset.x;
+    CGFloat width = self.scrollView.frame.size.width;
+    self.pageControl.currentPage = (offset+(width/2))/width;
+    
     [self disableScrollsToTop];
 }
-
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -277,26 +295,5 @@
         layer.shadowPath = [UIBezierPath bezierPathWithRect:viewController.view.bounds].CGPath;
     }
 }
-- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
-    return YES;
-}
-
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    for (UIViewController *viewController in self.viewControllers) {
-        // remove transform
-        viewController.view.transform = CGAffineTransformIdentity;
-        
-        NSInteger index = [self.viewControllers indexOfObject:viewController];
-        viewController.view.frame = CGRectMake(self.scrollView.frame.size.width * index,
-                                               0,
-                                               self.scrollView.frame.size.width,
-                                               self.scrollView.frame.size.height);
-    }
-    // go to the right page
-    self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
-    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*self.pageControl.currentPage, 0) animated:NO];
-}
-
 
 @end
