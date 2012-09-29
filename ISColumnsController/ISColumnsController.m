@@ -83,13 +83,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // setup
-    [self.pageControl addTarget:self action:@selector(didTapPageControl:) forControlEvents:UIControlEventValueChanged];
     
-    
-    // refresh
     [self reloadChildViewControllers];
-
+    [self.pageControl addObserver:self
+                       forKeyPath:@"currentPage"
+                          options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld)
+                          context:nil];
 }
 
 - (void)viewDidUnload
@@ -102,6 +101,8 @@
 - (void)dealloc
 {
     [self removeObserver:self forKeyPath:@"viewControllers"];
+    [self.pageControl removeObserver:self forKeyPath:@"currentPage"];
+    
     [_viewControllers release];
     [_scrollView release];
     [_titleLabel release];
@@ -118,30 +119,49 @@
         [self reloadChildViewControllers];
         [self disableScrollsToTop];
     }
-}
-
-#pragma mark - page view control
-- (void) goToPage:(NSUInteger )newPage animated:(BOOL) animated{
-    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*newPage, 0) animated:animated];
-}
-
-- (void) goToPage:(NSUInteger )newPage{
-    [self goToPage:newPage animated:YES];
-}
-- (void) didTapPageControl:(id) sender{
-    UIPageControl *pc = (UIPageControl *)sender;
-    [self goToPage:pc.currentPage];
     
+    if (object == self.pageControl && [keyPath isEqualToString:@"currentPage"]) {
+        NSInteger previousIndex = [[change objectForKey:@"old"] integerValue];
+        NSInteger currentIndex  = [[change objectForKey:@"new"] integerValue];
+        
+        if (previousIndex != currentIndex) {
+            [self didChangeCurrentPage:currentIndex previousPage:previousIndex];
+        }
+    }
 }
+
 #pragma mark - action
+
+- (void)didTapPageControl
+{
+    NSInteger currentPage = [self currentPage];
+    NSInteger nextPage    = self.pageControl.currentPage;
+    
+    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*nextPage, 0) animated:YES];
+    
+    if (currentPage != nextPage) {
+        [self didChangeCurrentPage:nextPage previousPage:currentPage];
+    }
+}
+
+- (void)didChangeCurrentPage:(NSInteger)currentIndex previousPage:(NSInteger)previousIndex
+{
+    UIViewController <ISColumnsControllerChild> *previousViewController = [self.viewControllers objectAtIndex:previousIndex];
+    if ([previousViewController respondsToSelector:@selector(didResignActive)]) {
+        [previousViewController didResignActive];
+    }
+    
+    UIViewController <ISColumnsControllerChild> *currentViewController = [self.viewControllers objectAtIndex:currentIndex];
+    if ([currentViewController respondsToSelector:@selector(didBecomeActive)]) {
+        [currentViewController didBecomeActive];
+    }
+}
 
 - (void)reloadChildViewControllers
 {
     for (UIViewController *viewController in self.childViewControllers) {
         [viewController willMoveToParentViewController:nil];
         [viewController removeFromParentViewController];
-        // remove transform
-        viewController.view.transform = CGAffineTransformIdentity;
         [viewController.view removeFromSuperview];
     }
     for (UIViewController *viewController in self.viewControllers) {
@@ -156,11 +176,12 @@
         [viewController didMoveToParentViewController:self];
         if (index == self.pageControl.currentPage) {
             self.titleLabel.text = viewController.navigationItem.title;
+            if ([viewController respondsToSelector:@selector(didBecomeActive)]) {
+                [(id)viewController didBecomeActive];
+            }
         }
     }
     self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
-    // go to the right page
-    [self goToPage:self.pageControl.currentPage animated:NO];
     
     for (UIViewController *viewController in self.childViewControllers) {
         CALayer *layer = viewController.view.layer;
@@ -226,19 +247,6 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     CGFloat offset = scrollView.contentOffset.x;
-    NSUInteger currentPage = self.currentPage;
-    if (currentPage != self.pageControl.currentPage && currentPage < [self.viewControllers count]) {
-        // Question - do not understand why previousViewController code here is the same index as currentVieWController? JC
-        UIViewController <ISColumnsControllerChild> *previousViewController = [self.viewControllers objectAtIndex:self.pageControl.currentPage];
-        if ([previousViewController respondsToSelector:@selector(didResignActive)]) {
-            [previousViewController didResignActive];
-        }
-        
-        UIViewController <ISColumnsControllerChild> *currentViewController = self.currentViewController;
-        if ([currentViewController respondsToSelector:@selector(didBecomeActive)]) {
-            [currentViewController didBecomeActive];
-        }
-    }
     
     for (UIViewController *viewController in self.viewControllers) {
         NSInteger index = [self.viewControllers indexOfObject:viewController];
@@ -261,8 +269,21 @@
     return YES;
 }
 
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
-    [self reloadChildViewControllers];
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    for (UIViewController *viewController in self.viewControllers) {
+        // remove transform
+        viewController.view.transform = CGAffineTransformIdentity;
+        
+        NSInteger index = [self.viewControllers indexOfObject:viewController];
+        viewController.view.frame = CGRectMake(self.scrollView.frame.size.width * index,
+                                               0,
+                                               self.scrollView.frame.size.width,
+                                               self.scrollView.frame.size.height);
+    }
+    // go to the right page
+    self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * [self.viewControllers count], 1);
+    [self.scrollView setContentOffset:CGPointMake(self.scrollView.frame.size.width*self.pageControl.currentPage, 0) animated:NO];
 }
 
 
