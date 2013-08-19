@@ -17,6 +17,7 @@
 		77E37443158E0C44007C75E8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E37442158E0C44007C75E8 /* main.m */; };
 		77E37447158E0C44007C75E8 /* ISAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E37446158E0C44007C75E8 /* ISAppDelegate.m */; };
 		77E37453158E11BA007C75E8 /* ISViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E37452158E11BA007C75E8 /* ISViewController.m */; };
+		7F5EDDE017C2E25A008043FD /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F5EDDDF17C2E25A008043FD /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		77E37446158E0C44007C75E8 /* ISAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ISAppDelegate.m; sourceTree = "<group>"; };
 		77E37451158E11BA007C75E8 /* ISViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISViewController.h; sourceTree = "<group>"; };
 		77E37452158E11BA007C75E8 /* ISViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISViewController.m; sourceTree = "<group>"; };
+		7F5EDDDF17C2E25A008043FD /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 		77E37427158E0C44007C75E8 = {
 			isa = PBXGroup;
 			children = (
+				7F5EDDDF17C2E25A008043FD /* Default-568h@2x.png */,
 				77E3743C158E0C44007C75E8 /* Columns */,
 				77E37435158E0C44007C75E8 /* Frameworks */,
 				77E37433158E0C44007C75E8 /* Products */,
@@ -143,7 +146,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = IS;
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = 77E3742C158E0C44007C75E8 /* Build configuration list for PBXProject "Columns" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -169,6 +172,7 @@
 			files = (
 				77E37441158E0C44007C75E8 /* InfoPlist.strings in Resources */,
 				7737A06815F34D6D0078CA7B /* ISViewController.xib in Resources */,
+				7F5EDDE017C2E25A008043FD /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +209,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -229,6 +237,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

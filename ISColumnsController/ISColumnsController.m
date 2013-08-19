@@ -298,6 +298,19 @@
         CALayer *layer = viewController.view.layer;
         layer.shadowPath = [UIBezierPath bezierPathWithRect:viewController.view.bounds].CGPath;
     }
+    
+    CGFloat pageWidth = scrollView.frame.size.width;
+    CGFloat fractionalPage = scrollView.contentOffset.x / pageWidth;
+    
+    NSInteger previousIndex = lround(fractionalPage);
+    if (previousIndex != self.pageControl.currentPage) {
+        [self didChangeCurrentPage:previousIndex previousPage:self.pageControl.currentPage];
+    }
+    
+    NSInteger newPage = lround(fractionalPage);
+    if (newPage != self.pageControl.currentPage) {
+        [self didChangeCurrentPage:newPage previousPage:self.pageControl.currentPage];
+    }
 }
 
 @end
